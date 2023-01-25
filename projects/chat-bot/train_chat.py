@@ -56,3 +56,37 @@ except:
         
 #print(words)
 
+words = sorted(list(set(words)))
+classes = sorted(list(set(classes)))
+#print(len(documents), len(words), len(classes))
+
+pickle.dump(words, open('Data/words.pkl', 'wb'))
+pickle.dump(classes, open('Data/classes.pkl', 'wb'))
+
+training = []
+output_empty = [0]*len(classes)
+
+for document in documents:
+    bag = []
+    pattern_words = document[0]
+    try:
+        pattern_words = [lemmatizer.lemmatize(word.lower()) for word in pattern_words]
+    except:
+        try:
+            _create_unverified_https_context = ssl._create_unverified_context
+        except AttributeError:
+            pass
+        else:
+            ssl._create_default_https_context = _create_unverified_https_context
+
+        nltk.download('wordnet')
+        nltk.download('omw-1.4')
+        pattern_words = [lemmatizer.lemmatize(word.lower()) for word in pattern_words]
+    for word in words:
+        bag.append(1) if word in pattern_words else bag.append(0)
+    output_row = list(output_empty)
+    output_row[classes.index(document[1])] = 1
+    
+    training.append([bag, output_row])
+
+print(training)
