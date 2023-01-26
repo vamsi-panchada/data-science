@@ -89,4 +89,38 @@ for document in documents:
     
     training.append([bag, output_row])
 
-print(training)
+#print(training)
+
+#for train in training:
+#    print(train)
+#    print('--'*25)
+
+random.shuffle(training)
+training = np.array(training, dtype=list)
+
+train_x = list(training[:, 0])
+train_y = list(training[:, 1])
+#print(train_x)
+#print('++==++'*25)
+#print(train_y)
+print('Training Data created succesful')
+
+#model creation
+#no.of layers = 3
+#no.of nuerons in layer1 = 128
+#no.of nuerons in layer2 = 64
+#no.of nuerons in layer3 = no.of intents in predict output.
+
+model = Sequential()
+model.add(Dense(128, input_shape=(len(train_x[0]),), activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(len(train_y[0]), activation='softmax'))
+
+sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+
+trainded_model = model.fit(np.array(train_x), np.array(train_y), epochs=200, batch_size=5, verbose=1)
+model.save('Data/chatbot_model.h5', trainded_model)
+print('Training Completed')
