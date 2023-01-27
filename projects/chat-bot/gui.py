@@ -60,4 +60,16 @@ def clean_sentence(sentence):
 
 def bag_of_words(sentence, words, show_details=True):
     sentence_words = clean_sentence(sentence)
+    bag = [0]*len(words)
+    for sentence_word in sentence_words:
+        for i, word in enumerate(words):
+            if word == sentence_word:
+                bag[i]=1
+                if show_details:
+                    print('found in bag : '+word)
+    return np.array(bag)
+
+
+def predict_class(sentence):
+    predicted = bag_of_words(sentence, words, show_details=False)
     
