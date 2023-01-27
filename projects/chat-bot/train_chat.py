@@ -34,6 +34,8 @@ for intent in intents['intents']:
                 ssl._create_default_https_context = _create_unverified_https_context
 
             nltk.download('punkt')
+            word = nltk.word_tokenize(pattern)
+            
         words.extend(word)
         documents.append((word, intent['tag']))
         if intent['tag'] not in classes:
