@@ -72,7 +72,7 @@ def bag_of_words(sentence, words, show_details=True):
 
 def predict_class(sentence):
     predicted = bag_of_words(sentence, words, show_details=False)
-    res = model.predict(np.array([p]))[0]
+    res = model.predict(np.array([predicted]))[0]
     ERROR_THRESHOLD = 0.25
     results = [[i, r] for i,r in enumerate(res) if r>ERROR_THRESHOLD]
     results.sort(key=lambda x: x[1], reverse=True)
@@ -87,8 +87,61 @@ def get_response(ints, intents_json):
     list_of_intents = intents_json['intents']
     for i in list_of_intents:
         if i['tag'] == tag:
-        result = random.choice(i['responses'])
-        break
+            result = random.choice(i['responses'])
+            break
     return result
     
+import tkinter
+from tkinter import *
+
+def send():
+    msg = EntryBox.get("1.0",'end-1c').strip()
+    EntryBox.delete("0.0",END)
+
+    if msg != '':
+        ChatBox.config(state=NORMAL)
+        ChatBox.insert(END, "You: " + msg + '\n\n')
+        ChatBox.config(foreground="#446665", font=("Verdana", 12 ))
+    
+        ints = predict_class(msg)
+        res = get_response(ints, intents)
+        
+        ChatBox.insert(END, "Bot: " + res + '\n\n')
+            
+        ChatBox.config(state=DISABLED)
+        ChatBox.yview(END)
+ 
+
+root = Tk()
+root.title("Chatbot")
+root.geometry("400x500")
+root.resizable(width=FALSE, height=FALSE)
+
+#Create Chat window
+ChatBox = Text(root, bd=0, bg="white", height="8", width="50", font="Arial",)
+
+ChatBox.config(state=DISABLED)
+
+#Bind scrollbar to Chat window
+scrollbar = Scrollbar(root, command=ChatBox.yview, cursor="heart")
+ChatBox['yscrollcommand'] = scrollbar.set
+
+#Create the box to enter message
+EntryBox = Text(root, bd=0, bg="white",width="29", height="5", font="Arial")
+#EntryBox.bind("<Return>", send)
+
+
+#Create Button to send message
+SendButton = Button(root, font=("Verdana",12,'bold'), text="Send", width="12", height=5,
+                    bd=0, bg="#f9a602", activebackground="#3c9d9b",fg='#000000',
+                    command= send )
+
+
+#Place all components on the screen
+scrollbar.place(x=376,y=6, height=426)
+ChatBox.place(x=6,y=6, height=426, width=370)
+EntryBox.place(x=6, y=441, height=50, width=320)
+SendButton.place(x=335, y=441, height=50, width=60)
+
+root.mainloop()
 
